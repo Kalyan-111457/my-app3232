@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String   @db.VarChar(100)
+  fullname   String   @db.VarChar(50)
+  phone      String   @db.VarChar(10)
+  bio        String   @db.VarChar(50)
+  resumeurl  String?   @db.VarChar(5000)
+  isDeleted  Boolean?  @default(false)
+  createdAt  DateTime @default(now())
+
+
+  jobs        Job[]
+  applications Application[]
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(50)
+  description String   @db.VarChar(50)
+  company     String   @db.VarChar(50)
+  location    String   @db.VarChar(50)
+  salary      String
+  createdAt   DateTime @default(now())
+  isDeleted   Boolean  @default(false)
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  applications Application[]
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  status    String   // applied, shortlisted, rejected
+  createdAt DateTime @default(now())
+  resumeurl String   @db.VarChar(1000)
+  isDeleted Boolean  @default(false)
+
+  userId    Int
+  jobId     Int
+
+  user      User     @relation(fields: [userId], references: [id])
+  job       Job      @relation(fields: [jobId], references: [id])
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+}
