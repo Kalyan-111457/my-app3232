@@ -23,12 +23,13 @@ export class UserController {
     async DeleteUser(@Param("id") id: number) {
         return await this.userdata.deleteUser(Number(id));
     }
-    
+
     @Get("/GetSingleUser/:id")
     @HttpCode(200)
-    async getsingleuser(@Param("id") id:number){
+    async getsingleuser(@Param("id") id: number) {
         return await this.userdata.getsingleuser(Number(id));
     }
 
+  
 
 }

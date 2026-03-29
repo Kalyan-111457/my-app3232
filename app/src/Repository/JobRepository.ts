@@ -5,16 +5,15 @@ export class JobRepository {
     private prisma = prisma;
 
     async CreateJob(data: JobModels) {
-
-        const user = await this.prisma.user.findUnique({
-            where: { id: data.userId,
-                isDeleted:false
-             }
+        const user = await this.prisma.user.findFirst({
+            where: {
+                id: data.userId,
+                isDeleted: false
+            }
         });
 
         if (!user) {
             throw new Error("User is Not found")
-         
         }
 
         if (data.id) {
@@ -26,7 +25,7 @@ export class JobRepository {
                 throw new Error("Job is Not Found")
             }
 
-            await this.prisma.job.update({
+            return await this.prisma.job.update({
                 where: { id: data.id },
                 data: {
                     title: data.title,
@@ -37,11 +36,9 @@ export class JobRepository {
                     userId: data.userId
                 }
             });
-
-
         }
 
-        await this.prisma.job.create({
+        return await this.prisma.job.create({
             data: {
                 title: data.title,
                 description: data.description,
@@ -64,7 +61,7 @@ export class JobRepository {
        
         }
 
-        await this.prisma.job.update({
+        return await this.prisma.job.update({
             where: { id },
             data: { isDeleted: true }
         });
@@ -87,13 +84,14 @@ export class JobRepository {
 
 
     async getsingleJob(id:number){
-        const job=await this.prisma.user.findFirst({
+        const job = await this.prisma.job.findFirst({
             where:{
-                id:id
+                id:id,
+                isDeleted: false
             }
         });
 
-        if(!job || job.isDeleted){
+        if(!job){
             throw new Error("Job is Not Found")
         }
 

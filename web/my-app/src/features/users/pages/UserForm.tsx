@@ -1,8 +1,13 @@
-import React, { useState, type FormEvent } from 'react';
+import { useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react';
 import { Input } from '../../../components/input';
 import { usersavedata } from '../api';
+import type { UserRequestPayload, UsersData } from '../types';
 
-const UserForm = () => {
+interface UserFormProps {
+    edituser: UsersData | null;
+    setedituser: Dispatch<SetStateAction<UsersData | null>>;
+}
+const UserForm = ({ edituser, setedituser }: UserFormProps) => {
 
     const [email, setEmail] = useState<string>("");
     const [Password, setPassword] = useState<string>("");
@@ -10,50 +15,65 @@ const UserForm = () => {
     const [Phone, setPhone] = useState<string>("");
     const [bio, setBio] = useState<string>("");
 
+
+    useEffect(() => {
+        if (edituser) {
+            setEmail(edituser.email);
+            setPassword(edituser.password);
+            setFullName(edituser.fullname);
+            setPhone(edituser.phone);
+            setBio(edituser.bio);
+        } else {
+            setEmail("");
+            setPassword("");
+            setFullName("");
+            setPhone("");
+            setBio("");
+        }
+    }, [edituser]);
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const obj = {
+        const obj: UserRequestPayload = {
+            id: edituser?.id,
             email: email,
             password: Password,
             fullname: fullname,
             phone: Phone,
             bio: bio
-        }
+        };
 
-        try{
+        try {
 
-        await usersavedata(obj);
+            if (edituser) {
+                await usersavedata(obj);
+                alert("Updated Successfully");
+                setedituser(null);
+            } else {
+                await usersavedata(obj);
+                alert("Created Successfully");
+            }
 
-        setEmail("");
-        setPassword("");
-        setBio("");
-        setPhone("");
-        setFullName("");
 
-        }catch(error){
-            if(error instanceof Error){
-                alert(error);
+            setedituser(null);
+
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message);
 
             }
-            else{
+            else {
                 alert("Something Went Wrong");
             }
         }
-
-
     }
-
-
-
 
     return (
         <div>
 
             <form onSubmit={handleSubmit}>
                 <label>Full Name</label>
-
-
                 <Input
                     type='text'
                     placeholder='Enter the Full Name'
@@ -97,11 +117,9 @@ const UserForm = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     name='phone'
                 />
-                <button type='submit'>Submit</button>
+                <button type='submit'>{edituser ? "Update" : "Submit"}
+                </button>
             </form>
-
-
-
         </div>
     )
 }
