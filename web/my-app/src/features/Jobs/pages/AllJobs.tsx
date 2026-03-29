@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { AllJob, deleteJob } from "../JobApi";
 import type { JobApply } from "../type";
+import { Input } from "../../../components/input";
 
 const AllJobs = () => {
   const [data, setData] = useState<JobApply[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const[search,setSearch]=useState<string>("");
 
   const handledelete=async(id:number)=>{
     try{
@@ -43,10 +45,20 @@ const AllJobs = () => {
     fetchdata();
   }, []);
 
+  const filtereddata=data.filter((item)=>item.company.toLocaleLowerCase().includes(search.toLowerCase()));
+
   return (
     <div>
       {loading ? <p>Loading...</p> : null}
       {!loading && error ? <p>{error}</p> : null}
+
+      <Input
+      type="text"
+      placeholder="Enter the Jobname for search"
+      name="search"
+      value={search}
+      onChange={(e)=>setSearch(e.target.value)}
+      />
 
       <table border={1}>
         <thead>
@@ -60,7 +72,7 @@ const AllJobs = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {filtereddata.map((item) => (
             <tr key={item.id ?? `${item.title}-${item.userId}`}>
               <td>{item.title}</td>
               <td>{item.description}</td>
