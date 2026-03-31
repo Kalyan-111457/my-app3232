@@ -97,6 +97,4 @@ export class ApplicationController {
     public async GetApplicationByUserIdandJobId(@QueryParam("userid") userid:number,@QueryParam("jobid") jobid:number){
         return await this.data.getApploicationByUserIdandJobId(userid,jobid);
     }
-
-
 }

@@ -7,8 +7,8 @@ export class UserRepository {
     private normalizePhone(phone: string) {
         const value = phone.trim();
 
-        if (value.length > 20) {
-            throw new Error("Phone number must be 20 characters or fewer");
+        if (value.length > 10) {
+            throw new Error("Phone number must be 10 characters or fewer");
         }
 
         return value;
@@ -78,7 +78,8 @@ export class UserRepository {
                     phone: phone,
                     bio: data.bio,
                     password: data.password,
-                    resumeurl: data.resumeurl ?? null
+                    resumeurl: data.resumeurl ?? null,
+                    isAdmin: data.isAdmin ?? user.isAdmin
                 }
             });
         }
@@ -99,7 +100,8 @@ export class UserRepository {
                 phone: phone,
                 bio: data.bio,
                 password: data.password,
-                resumeurl: data.resumeurl ?? null
+                resumeurl: data.resumeurl ?? null,
+                isAdmin: data.isAdmin ?? "user"
             }
         });
 
@@ -119,6 +121,22 @@ export class UserRepository {
         }
 
         return users;
+    }
+
+
+    async LoginForUser(username:string,password:string){
+        const data = await this.prisma.user.findFirst({
+            where:{
+                email:username,
+                password:password
+            }
+        });
+
+        if(!data){
+            throw new Error("No User is Found");
+        }
+
+        return data.isAdmin;
     }
 
 }

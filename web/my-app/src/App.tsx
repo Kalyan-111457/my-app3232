@@ -1,16 +1,17 @@
+import { Route, Routes } from 'react-router-dom'
 import AllJobs from './features/Jobs/pages/AllJobs'
-import CreateJob from './features/Jobs/pages/CreateJob'
 import UsersEditPage from './features/users/pages/UsersEditPage'
+import LoginForm from './Login/pages/LoginForm'
 
 function App() {
 
   return (
     <>
-    <h1>This is the Hello World</h1>
-    
-      <UsersEditPage/>
-      <CreateJob/>
-      <AllJobs/>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/users" element={<UsersEditPage />} />
+        <Route path="/jobs" element={<AllJobs />} />
+      </Routes>
 
     </>
   )

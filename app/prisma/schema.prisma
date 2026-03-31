@@ -16,8 +16,7 @@ model User {
   resumeurl  String?   @db.VarChar(5000)
   isDeleted  Boolean?  @default(false)
   createdAt  DateTime @default(now())
-
-
+  isAdmin    String   @default("user") @db.VarChar(50)
   jobs        Job[]
   applications Application[]
 }
