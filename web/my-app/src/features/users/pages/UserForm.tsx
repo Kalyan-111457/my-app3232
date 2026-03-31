@@ -41,7 +41,8 @@ const UserForm = ({ edituser, setedituser }: UserFormProps) => {
             password: Password,
             fullname: fullname,
             phone: Phone,
-            bio: bio
+            bio: bio,
+            isAdmin:"user"
         };
 
         try {

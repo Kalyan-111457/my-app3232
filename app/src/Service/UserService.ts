@@ -33,8 +33,12 @@ export class UserService{
         return await this.data.GetSingleUser(id);
     }
 
-   
 
-
+    async LoginService(username:string,password:string){
+        if(!username?.trim() || !password?.trim()){
+            throw new Error("Email and password are required");
+        }
+        return this.data.LoginForUser(username,password);
+    }
 
 }

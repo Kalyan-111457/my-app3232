@@ -1,0 +1,189 @@
+.sidebar-shell {
+  --sidebar-bg: linear-gradient(180deg, #07111d 0%, #0b1727 58%, #0f223d 100%);
+  --sidebar-surface: rgba(255, 255, 255, 0.04);
+  --sidebar-surface-strong: rgba(255, 255, 255, 0.08);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: #f4f7fb;
+  --sidebar-muted: rgba(244, 247, 251, 0.58);
+  --sidebar-accent: #66a4ff;
+  --sidebar-accent-deep: #2a67d8;
+  position: relative;
+  width: 288px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 28px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background:
+    radial-gradient(circle at top, rgba(64, 125, 255, 0.15), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 18%),
+    var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 24px 0 40px rgba(2, 7, 16, 0.18);
+  overflow: hidden;
+}
+
+.sidebar-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 94%);
+  pointer-events: none;
+}
+
+.sidebar-brand,
+.sidebar-section-label,
+.sidebar-nav {
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--sidebar-border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(12px);
+}
+
+.sidebar-brand-mark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff5ff 0%, #8cbcff 42%, #2d6fe8 100%);
+  color: #08111c;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  box-shadow: 0 14px 28px rgba(42, 103, 216, 0.25);
+}
+
+.sidebar-brand p,
+.sidebar-brand span {
+  margin: 0;
+}
+
+.sidebar-brand p {
+  color: var(--sidebar-text);
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-brand span {
+  color: var(--sidebar-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-section-label {
+  padding: 0 8px;
+  color: rgba(244, 247, 251, 0.45);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  background: rgba(255, 255, 255, 0.025);
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.sidebar-link:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-link-active {
+  background: linear-gradient(135deg, rgba(102, 164, 255, 0.18), rgba(34, 70, 143, 0.28));
+  border-color: rgba(102, 164, 255, 0.22);
+  box-shadow: 0 16px 28px rgba(25, 58, 121, 0.22);
+}
+
+.sidebar-link-badge {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--sidebar-accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-link-active .sidebar-link-badge {
+  background: linear-gradient(135deg, rgba(239, 245, 255, 0.95), rgba(136, 186, 255, 0.8));
+  color: var(--sidebar-accent-deep);
+}
+
+.sidebar-link-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-link-copy strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.sidebar-link-copy small {
+  color: var(--sidebar-muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 900px) {
+  .sidebar-shell {
+    width: 100%;
+    min-height: auto;
+    padding: 18px 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--sidebar-border);
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .sidebar-link {
+    min-height: 60px;
+  }
+}

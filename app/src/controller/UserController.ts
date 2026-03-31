@@ -1,4 +1,4 @@
-import { JsonController, Get, Post, Delete, Body, Param, HttpCode } from "routing-controllers";
+import { JsonController, Get, Post, Delete, Body, Param, HttpCode, QueryParam } from "routing-controllers";
 import { UsersModel } from "../models/UserModel";
 import { UserService } from "../Service/UserService";
 
@@ -29,6 +29,19 @@ export class UserController {
     async getsingleuser(@Param("id") id: number) {
         return await this.userdata.getsingleuser(Number(id));
     }
+
+    @Post("/LoginUser")
+    @HttpCode(200)
+    public async UserLogin(@QueryParam("email") email: string, @QueryParam("password") password: string){
+        return this.userdata.LoginService(email, password);
+    }
+
+  
+
+
+
+
+
 
   
 

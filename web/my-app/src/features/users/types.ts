@@ -5,6 +5,7 @@ export interface UserRequestPayload {
     fullname: string,
     phone: string,
     bio: string,
+    isAdmin:string
 }
 
 
