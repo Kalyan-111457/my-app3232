@@ -94,6 +94,7 @@ export class UserRepository {
 
         return await this.prisma.user.create({
             data: {
+                
                 fullname: data.fullname,
                 email: data.email,
                 phone: phone,
