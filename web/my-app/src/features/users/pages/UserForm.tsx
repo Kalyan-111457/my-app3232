@@ -1,128 +1,180 @@
-import { useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Input } from '../../../components/input';
-import { usersavedata } from '../api';
+import { usersavedata, deleteUsers, AllUserData } from '../api';
 import type { UserRequestPayload, UsersData } from '../types';
 
-interface UserFormProps {
-    edituser: UsersData | null;
-    setedituser: Dispatch<SetStateAction<UsersData | null>>;
-}
-const UserForm = ({ edituser, setedituser }: UserFormProps) => {
 
-    const [email, setEmail] = useState<string>("");
-    const [Password, setPassword] = useState<string>("");
-    const [fullname, setFullName] = useState<string>("");
-    const [Phone, setPhone] = useState<string>("");
-    const [bio, setBio] = useState<string>("");
+const UserForm = () => {
 
+    const [email, setEmail] = useState("");
+    const [Password, setPassword] = useState("");
+    const [fullname, setFullName] = useState("");
+    const [Phone, setPhone] = useState("");
+    const [bio, setBio] = useState("");
+    const [editId, setEditId] = useState<number | null>(null);
+
+    const [AllUsers, setAllUsers] = useState<UsersData[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [search, setSearch] = useState("");
+
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await AllUserData();
+            setAllUsers(response || []);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            if (error instanceof Error) {
+                setError(error.message);
+            }
+        }
+    };
 
     useEffect(() => {
-        if (edituser) {
-            setEmail(edituser.email);
-            setPassword(edituser.password);
-            setFullName(edituser.fullname);
-            setPhone(edituser.phone);
-            setBio(edituser.bio);
-        } else {
-            setEmail("");
-            setPassword("");
-            setFullName("");
-            setPhone("");
-            setBio("");
-        }
-    }, [edituser]);
+        fetchData();
+    }, []);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const obj: UserRequestPayload = {
-            id: edituser?.id,
-            email: email,
+            id: editId || undefined,
+
+            email,
             password: Password,
-            fullname: fullname,
+            fullname,
             phone: Phone,
-            bio: bio,
-            isAdmin:"user"
+            bio,
+            isAdmin: "user"
         };
 
         try {
+            await usersavedata(obj);
+            alert("Created Successfully");
+            setDialogOpen(false);
 
-            if (edituser) {
-                await usersavedata(obj);
-                alert("Updated Successfully");
-                setedituser(null);
-            } else {
-                await usersavedata(obj);
-                alert("Created Successfully");
-            }
+            setEmail("");
+            setPassword("");
+            setFullName("");
+            setPhone("");
+            setBio("");
+            setEditId(null);
 
 
-            setedituser(null);
-
+            fetchData();
         } catch (error) {
             if (error instanceof Error) {
+                setError(error.message);
                 alert(error.message);
-
-            }
-            else {
-                alert("Something Went Wrong");
             }
         }
+    };
+
+    const handleDelete = async (id: number) => {
+        try {
+            await deleteUsers(id);
+            alert("Successfully Deleted");
+            fetchData();
+        } catch (error) {
+            alert("Something went wrong");
+        }
+    };
+
+
+
+    const filteredData = AllUsers.filter((item) =>
+        item.fullname.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const handleEdit = (item: UsersData) => {
+        setDialogOpen(true);
+        setEmail(item.email);
+        setPassword(item.password);
+        setFullName(item.fullname);
+        setBio(item.bio);
+        setPhone(item.phone);
+        setEditId(item.id); 
+
     }
+
+
 
     return (
         <div>
 
-            <form onSubmit={handleSubmit}>
-                <label>Full Name</label>
-                <Input
-                    type='text'
-                    placeholder='Enter the Full Name'
-                    value={fullname}
-                    onChange={(e) => setFullName(e.target.value)}
-                    name='fullname'
-                />
 
-                <label>email</label>
-                <Input
-                    type='email'
-                    placeholder='Enter the Email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    name='email'
-                />
-                <label>Password</label>
-                <Input
-                    type='password'
-                    placeholder='Enter the Password'
-                    value={Password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    name='password'
-                />
 
-                <label>Bio</label>
+            <div>
+                <h2>All Users CRUD Operations</h2>
+                <button type="button" onClick={() => setDialogOpen(!dialogOpen)}>+Add</button>
+            </div>
 
-                <Input
-                    type='text'
-                    placeholder='Enter the Bio'
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    name='bio'
-                />
+            {dialogOpen && (
 
-                <label>Phone</label>
-                <Input
-                    type='text'
-                    placeholder='Enter the Phone No'
-                    value={Phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    name='phone'
-                />
-                <button type='submit'>{edituser ? "Update" : "Submit"}
-                </button>
-            </form>
+                <form onSubmit={handleSubmit}>
+                    <input type='text' placeholder='Full Name' value={fullname} onChange={(e) => setFullName(e.target.value)} />
+                    <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type='password' placeholder='Password' value={Password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type='text' placeholder='Bio' value={bio} onChange={(e) => setBio(e.target.value)} />
+                    <input type='text' placeholder='Phone' value={Phone} onChange={(e) => setPhone(e.target.value)} />
+
+                    <button type='submit'>
+                        {editId ? "Update" : "Submit"}
+                    </button>
+                </form>
+            )}
+
+            <input
+                type='text'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder='Search by name'
+            />
+
+            {loading && <p>Loading...</p>}
+            {error && <p>{error}</p>}
+
+            {filteredData.length > 0 ? (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FullName</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Phone</th>
+                            <th>Bio</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {filteredData.map((item) => (
+                            <tr key={item.id}>
+                                <td>{item.fullname}</td>
+                                <td>{item.email}</td>
+                                <td>{item.password}</td>
+                                <td>{item.phone}</td>
+                                <td>{item.bio}</td>
+                                <td>
+                                    <button onClick={() => handleDelete(item.id)}>Delete</button>
+                                </td>
+                                <td>
+                                    <button onClick={() => handleEdit(item)}>Edit</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p>No Users Found</p>
+            )}
+
         </div>
-    )
-}
+    );
+};
 
-export default UserForm
+export default UserForm;

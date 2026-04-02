@@ -19,10 +19,6 @@ export class UserRepository {
             where: { isDeleted: false }
         });
 
-        if (users.length === 0) {
-            throw new Error("No Users Found")
-        }
-
         return users;
     }
 
