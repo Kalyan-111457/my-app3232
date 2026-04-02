@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
-import AllJobs from './features/Jobs/pages/AllJobs'
-import UsersEditPage from './features/users/pages/UsersEditPage'
 import LoginForm from './Login/pages/LoginForm'
+import CreateJob from './features/Jobs/pages/CreateJob'
+import UserForm from './features/users/pages/UserForm'
 
 function App() {
 
@@ -9,8 +9,8 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LoginForm />} />
-        <Route path="/users" element={<UsersEditPage />} />
-        <Route path="/jobs" element={<AllJobs />} />
+        <Route path="/users" element={<UserForm />} />
+        <Route path="/jobs" element={<CreateJob />} />
       </Routes>
 
     </>
