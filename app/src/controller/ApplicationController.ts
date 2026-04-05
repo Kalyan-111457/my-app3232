@@ -1,9 +1,10 @@
-import { JsonController, Get, Post, Body, Param, UploadedFile,Delete, HttpCode, QueryParam, UseBefore, } from "routing-controllers";
+import { JsonController, Get, Post, Body, Param, UploadedFile, Delete, HttpCode, QueryParam, UseBefore, } from "routing-controllers";
 import multer from "multer";
 import { Supabase } from "../config/Supabase";
 import { v4 as uuidv4 } from "uuid";
 import { ApplicationModel } from "../models/ApplicationModel";
 import { ApplicationService } from "../Service/ApplicationService";
+import { AuthMiddleWare } from "../utils/AuthMiddleWare";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -13,15 +14,17 @@ export class ApplicationController {
     private data: ApplicationService;
 
     constructor() {
-        this.data=new ApplicationService();
+        this.data = new ApplicationService();
     }
 
     @Post("/ApplyJob")
     @HttpCode(200)
-    @UseBefore(upload.single("file"))   
+    @UseBefore(AuthMiddleWare)
+
+    @UseBefore(upload.single("file"))
     public async ApplyJob(
         @Body() body: ApplicationModel,
-        @UploadedFile("file") file: any 
+        @UploadedFile("file") file: any
     ) {
 
         if (!file) {
@@ -53,7 +56,7 @@ export class ApplicationController {
             return await this.data.ApplyJob(
                 body.userId,
                 body.jobId,
-                resumeUrl   
+                resumeUrl
             );
 
         } catch (err) {
@@ -62,39 +65,54 @@ export class ApplicationController {
         }
     }
     @Post("/UpdateStatus/:id")
+
+
+
+    @UseBefore(AuthMiddleWare)
+
     @HttpCode(200)
-    public async UpdateStatus(@Param("id") id:number , @Body() body:{status:string}){
-        return await this.data.UpdateApplication(Number(id),body.status);
+    public async UpdateStatus(@Param("id") id: number, @Body() body: { status: string }) {
+        return await this.data.UpdateApplication(Number(id), body.status);
     }
 
     @Post("/deleteApplication/:id")
+
+    @UseBefore(AuthMiddleWare)
+
     @HttpCode(200)
-    public async DeleteApplication(@Param("id") id:number){
+    public async DeleteApplication(@Param("id") id: number) {
         return this.data.deleteApplication(Number(id));
     }
 
     @Get("/GetApplicationById/:id")
+    @UseBefore(AuthMiddleWare)
+
     @HttpCode(200)
-    public async GetApplication(@Param("id") id:number){
+    public async GetApplication(@Param("id") id: number) {
         return this.data.getApplicationById(Number(id))
     }
 
 
     @Get("/GetApplicationByUserId/:id")
+    @UseBefore(AuthMiddleWare)
+
     @HttpCode(200)
-    public async GetApplicationByUserId(@Param("id") id:number){
+    public async GetApplicationByUserId(@Param("id") id: number) {
         return this.data.getApplicationByUserId(Number(id))
     }
 
     @Get("/GetApplicationByJobId/:id")
+    @UseBefore(AuthMiddleWare)
+
     @HttpCode(200)
-    public async GetApplicationByJobId(@Param("id") id:number){
+    public async GetApplicationByJobId(@Param("id") id: number) {
         return this.data.getApplicationByJobId(Number(id))
     }
 
     @Get("/Search")
+    @UseBefore(AuthMiddleWare)
     @HttpCode(200)
-    public async GetApplicationByUserIdandJobId(@QueryParam("userid") userid:number,@QueryParam("jobid") jobid:number){
-        return await this.data.getApploicationByUserIdandJobId(userid,jobid);
+    public async GetApplicationByUserIdandJobId(@QueryParam("userid") userid: number, @QueryParam("jobid") jobid: number) {
+        return await this.data.getApploicationByUserIdandJobId(userid, jobid);
     }
 }

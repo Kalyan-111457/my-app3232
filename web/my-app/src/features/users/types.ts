@@ -5,7 +5,7 @@ export interface UserRequestPayload {
     fullname: string,
     phone: string,
     bio: string,
-    isAdmin:string
+    isAdmin: string
 }
 
 
@@ -16,6 +16,7 @@ export interface UsersData {
     fullname: string;
     phone: string;
     bio: string;
+    isAdmin: string;
     resumeurl?: string | null;
     createdAt: Date;
 

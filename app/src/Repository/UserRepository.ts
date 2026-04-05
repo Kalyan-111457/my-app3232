@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma";
 import { UsersModel } from "../models/UserModel";
+import { GenerateToken } from "../utils/Jwt";
 
 export class UserRepository {
     private prisma = prisma;
@@ -121,18 +122,33 @@ export class UserRepository {
 
 
     async LoginForUser(username:string,password:string){
-        const data = await this.prisma.user.findFirst({
-            where:{
-                email:username,
-                password:password
+        const email = username.trim().toLowerCase();
+        const rawPassword = password.trim();
+
+        const data = await this.prisma.user.findUnique({
+            where: {
+                email
             }
         });
 
-        if(!data){
+        if(!data || data.isDeleted){
             throw new Error("No User is Found");
         }
 
-        return data.isAdmin;
+        if (data.password !== rawPassword) {
+            throw new Error("Invalid password");
+        }
+
+        const token=GenerateToken({
+            id:data.id,
+            email:data.email,
+            role:data.isAdmin
+        });
+
+        return {
+            token,
+            role: data.isAdmin
+        };
     }
 
 }

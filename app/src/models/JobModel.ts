@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt } from "class-validator";
+import { IsNotEmpty, IsInt, IsOptional } from "class-validator";
 
 export class JobModels {
 
@@ -19,6 +19,7 @@ export class JobModels {
     @IsNotEmpty()
     salary!: string;
 
+    @IsOptional()
     @IsInt()
-    userId!: number;
+    userId?: number;
 }
