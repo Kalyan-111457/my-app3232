@@ -5,14 +5,17 @@ export class JobRepository {
     private prisma = prisma;
 
     async CreateJob(data: JobModels) {
-        const user = await this.prisma.user.findFirst({
-            where: {
-                id: data.userId,
-                isDeleted: false
-            }
+        const userId = data.userId;
+
+        if (userId === undefined) {
+            throw new Error("User id is required");
+        }
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId }
         });
 
-        if (!user) {
+        if (!user || user.isDeleted) {
             throw new Error("User is Not found")
         }
 
@@ -33,7 +36,7 @@ export class JobRepository {
                     company: data.company,
                     location: data.location,
                     salary: data.salary,
-                    userId: data.userId
+                    userId
                 }
             });
         }
@@ -45,7 +48,7 @@ export class JobRepository {
                 company: data.company,
                 location: data.location,
                 salary: data.salary,
-                userId: data.userId
+                userId
             }
         });
 

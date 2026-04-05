@@ -5,5 +5,5 @@ export interface JobApply{
     company:string,
     location:string,
     salary:string,
-    userId:number
+    userId?:number
 }

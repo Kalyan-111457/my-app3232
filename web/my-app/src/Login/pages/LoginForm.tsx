@@ -1,7 +1,5 @@
-import { type ChangeEvent, type FormEvent, useEffect } from 'react'
-import { useState } from 'react'
-import type{ LoginModel } from '../LoginModel'
-import { Input } from '../../components/input'
+import {  type FormEvent, useEffect, useRef } from 'react'
+
 import { LoginVerification } from '../app'
 import { useNavigate } from 'react-router-dom'
 import './LoginForm.css'
@@ -17,39 +15,50 @@ const LoginForm = () => {
         };
     }, []);
 
-    const [data,setData]=useState<LoginModel>({
-        username:"",
-        password:""
-    });
+    const emailRef=useRef<HTMLInputElement>(null);
+    const passwordRef=useRef<HTMLInputElement>(null);
 
-    const handlechange=async(e:ChangeEvent<HTMLInputElement>)=>{
-        const {name,value}=e.target;
-        setData((prev)=>({
-            ...prev,[name]:value
-    }))
-    }
+
+    useEffect(()=>{
+        emailRef.current?.focus();
+    },[])
+
+
+    
 
     const handleSubmit=async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
 
-        try{
-        const response=await LoginVerification(data.username,data.password);
+        const email = emailRef.current?.value.trim() ?? "";
+        const password = passwordRef.current?.value.trim() ?? "";
 
-        if(response){
-            if(response==='admin'){
-                navigate("/jobs")
-            }
-            else if(response==='user'){
-                navigate("/users")
-            }
+        if (!email || !password) {
+            alert("Email and password are required");
+            return;
         }
-        else{
-            throw new Error(response.data);
+
+        try{
+        const response=await LoginVerification(email,password);
+
+                if (response?.token) {
+
+            localStorage.setItem("token", response.token);
+
+            if (response.role === "admin") {
+                navigate("/jobs");
+            } else if (response.role === "user") {
+                navigate("/users");
+            }
+
+        } else {
+            throw new Error("Invalid response");
         }
+
+      
         }catch(error){
             if(error instanceof Error){
                 console.error(error.message);
-                throw new Error(error.message);
+                alert(error.message);
             }
             else{
                 alert("SomeThing Went Wrong");
@@ -79,23 +88,21 @@ const LoginForm = () => {
             <form onSubmit={handleSubmit} className="login-form">
                 <label className="login-field">
                     <span>Email Address</span>
-                    <Input
+                    <input
                     type='email'
                     placeholder='Enter the Email'
-                    value={data.username}
                     name='username'
-                    onChange={handlechange}
+                    ref={emailRef}
                     />
                 </label>
 
                 <label className="login-field">
                     <span>Password</span>
-                    <Input
+                    <input
                     type='password'
                     placeholder='Enter the Password'
-                    value={data.password}
-                    onChange={handlechange}
                     name='password'
+                    ref={passwordRef}
                     />
                 </label>
 

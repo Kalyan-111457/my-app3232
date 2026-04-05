@@ -1,11 +1,8 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { Input } from "../../../components/input";
 import { AllJob, CreateJob as createJobApi,deleteJob } from "../JobApi";
 import type { JobApply } from "../type";
 import "./css/CreateJob.css";
-
-
-const ADMIN_USER_ID = 5;
 
 export const CreateJob = () => {
 
@@ -16,7 +13,6 @@ export const CreateJob = () => {
     company: "",
     salary: "",
     location: "",
-    userId: ADMIN_USER_ID,
   });
 
 
@@ -88,7 +84,7 @@ export const CreateJob = () => {
   useEffect(() => {
     fetchAllJobsData();
   }, []);
-
+const[count,setcount]=useState<number>(19);
 
   const handlesubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -102,7 +98,6 @@ export const CreateJob = () => {
         company: "",
         salary: "",
         location: "",
-        userId: ADMIN_USER_ID,
       });
       fetchAllJobsData();
       setOpenDialog(false);
@@ -114,13 +109,22 @@ export const CreateJob = () => {
       }
     }
   };
+ const filteredData = useMemo(() => {
+  console.log("Filtering...");
+  return Jobs.filter((item) =>
+    item.title.toLowerCase().includes(search.toLowerCase())
+  );
+}, [Jobs, search]);
 
-
-  const filteredData=Jobs.filter((item)=>item.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
 
  <div   className="jobs-page">
+  <button onClick={()=>setcount(count+1)}>
+    Increment
+  </button>
+
+  <p>{count}</p>
 
     {/* Header */}
     <div className="jobs-header">
