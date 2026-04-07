@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { usersavedata, deleteUsers, AllUserData } from '../api';
 import type { UserRequestPayload, UsersData } from '../types';
-import "./UserForm.css";
+import "./Css/UserForm.css";
 
 
 const UserForm = () => {

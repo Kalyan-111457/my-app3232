@@ -1,5 +1,6 @@
 import { ApiClient } from "../../services/apiclient";
 import type { JobApply } from "./type";
+import type { Alljobs } from "../users/UsersModel";
 
 export const CreateJob=async(body:JobApply)=>{
     try{
@@ -17,7 +18,7 @@ export const CreateJob=async(body:JobApply)=>{
     }
 }
 
-export const AllJob=async():Promise<JobApply[]>=>{
+export const AllJob=async():Promise<Alljobs[]>=>{
     try{
         const response=await ApiClient.get("/jobs/listJobs");
         return response.data;
@@ -49,5 +50,4 @@ export const deleteJob=async(id:number)=>{
         }        
     }
 }
-
 

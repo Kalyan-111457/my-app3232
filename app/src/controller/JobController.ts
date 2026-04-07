@@ -14,8 +14,7 @@ export class JobController{
     private data1=new JobService();
 
     @Get("/listJobs")
-        @UseBefore(AuthMiddleWare)
-    
+    @UseBefore(AuthMiddleWare)
     @HttpCode(200)
     public async listofjobs(){
         return await this.data1.listjobs();
