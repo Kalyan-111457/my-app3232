@@ -47,7 +47,7 @@ const LoginForm = () => {
             if (response.role === "admin") {
                 navigate("/jobs");
             } else if (response.role === "user") {
-                navigate("/users");
+                navigate("/alljobs");
             }
 
         } else {

@@ -65,11 +65,7 @@ export class ApplicationController {
         }
     }
     @Post("/UpdateStatus/:id")
-
-
-
     @UseBefore(AuthMiddleWare)
-
     @HttpCode(200)
     public async UpdateStatus(@Param("id") id: number, @Body() body: { status: string }) {
         return await this.data.UpdateApplication(Number(id), body.status);
