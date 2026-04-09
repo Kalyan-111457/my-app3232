@@ -22,7 +22,6 @@ export class JobController{
 
     @Post("/upsert")
     @UseBefore(AuthMiddleWare)
-    
     @HttpCode(200)
     public async CreateJOb(@Body() data:JobModels, @Req() request: AuthenticatedRequest){
         data.userId = request.user?.id;

@@ -10,7 +10,6 @@ export const JobContext=createContext<{
     setItems:()=>{}
 })
 
-
 export const JobProvider = ({ children }: { children: ReactNode }) => {
     const [items,setItems]=useState<Alljobs | null>(null);
 

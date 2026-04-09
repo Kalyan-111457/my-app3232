@@ -6,7 +6,6 @@ import JobApplyPage from './features/users/pages/JobApplyPage'
 import UserHomePage from './features/users/pages/UserHomePage'
 
 function App() {
-
   return (
     <>
       <Routes>

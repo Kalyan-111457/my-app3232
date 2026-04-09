@@ -1,12 +1,20 @@
-import { JsonController, Get, Post, Body, Param, UploadedFile, Delete, HttpCode, QueryParam, UseBefore, } from "routing-controllers";
-import multer from "multer";
+import { JsonController, Get, Post, Body, Param, Req, HttpCode, QueryParam, UseBefore, } from "routing-controllers";
 import { Supabase } from "../config/Supabase";
 import { v4 as uuidv4 } from "uuid";
 import { ApplicationModel } from "../models/ApplicationModel";
 import { ApplicationService } from "../Service/ApplicationService";
 import { AuthMiddleWare } from "../utils/AuthMiddleWare";
+import { JWTPAYLOAD } from "../utils/JwtModel";
+import { Request } from "express";
 
-const upload = multer({ storage: multer.memoryStorage() });
+
+
+
+type AuthenticatedRequest = Request & {
+    user?: JWTPAYLOAD;
+};
+
+const RESUME_BUCKET = process.env.SUPABASE_RESUME_BUCKET || "ResumeUpload";
 
 @JsonController("/Application")
 export class ApplicationController {
@@ -20,42 +28,65 @@ export class ApplicationController {
     @Post("/ApplyJob")
     @HttpCode(200)
     @UseBefore(AuthMiddleWare)
-
-    @UseBefore(upload.single("file"))
     public async ApplyJob(
-        @Body() body: ApplicationModel,
-        @UploadedFile("file") file: any
+        @Body({ options: { limit: "25mb" } }) body: ApplicationModel,
+        @Req() request: AuthenticatedRequest
     ) {
 
-        if (!file) {
+        if (!body?.base64file) {
             return "File is required";
         }
 
         try {
+            const userId = request.user?.id;
+            if (typeof userId !== "number") {
+                return "Unauthorized user";
+            }
 
-            const fileName = `${uuidv4()}-${file.originalname}`;
-            const filePath = `user-${body.userId}/job-${body.jobId}/${fileName}`;
+            const jobId = Number(body.jobId);
+            if (!Number.isFinite(jobId) || jobId <= 0) {
+                return "Invalid job id";
+            }
+
+            const fileParts = body.base64file.match(/^data:(.+);base64,(.+)$/);
+            if (!fileParts) {
+                return "Invalid file format";
+            }
+
+            const mimeType = fileParts[1];
+            const base64Data = fileParts[2];
+            const fileBuffer = Buffer.from(base64Data, "base64");
+
+            if (!fileBuffer.length) {
+                return "Invalid file content";
+            }
+
+            const extension = mimeType.split("/")[1] || "bin";
+            const fileName = `${uuidv4()}.${extension}`;
+            const filePath = `user-${userId}/job-${jobId}/${fileName}`;
 
             const { error } = await Supabase.storage
-                .from("resumes")
-                .upload(filePath, file.buffer, {
-                    contentType: file.mimetype
+                .from(RESUME_BUCKET)
+                .upload(filePath, fileBuffer, {
+                    contentType: mimeType
                 });
 
             if (error) {
                 console.error(error);
-                return "Upload failed";
+                return `Upload failed: ${error.message}`;
             }
 
+            body.userId = userId;
+
             const { data } = Supabase.storage
-                .from("resumes")
+                .from(RESUME_BUCKET)
                 .getPublicUrl(filePath);
 
             const resumeUrl = data.publicUrl;
 
             return await this.data.ApplyJob(
-                body.userId,
-                body.jobId,
+                userId,
+                jobId,
                 resumeUrl
             );
 
