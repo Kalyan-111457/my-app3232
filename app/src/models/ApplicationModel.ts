@@ -1,5 +1,5 @@
 export interface ApplicationModel{
-    userId:number,
+    userId?:number,
     jobId:number,
-    resumeurl:string
+    base64file:string
 }

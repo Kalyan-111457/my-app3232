@@ -9,3 +9,4 @@ export interface Alljobs{
     isDeleted: boolean;
     userId: number;
 }
+

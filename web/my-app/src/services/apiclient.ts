@@ -1,10 +1,7 @@
 import axios from "axios";
 
 export const ApiClient=axios.create({
-    baseURL:"http://localhost:4000",
-    headers:{
-        "Content-Type":"application/json"
-    }
+    baseURL:"http://localhost:4000"
 })
 
 ApiClient.interceptors.request.use((config)=>{

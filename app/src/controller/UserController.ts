@@ -15,8 +15,7 @@ export class UserController {
     }
 
     @Post("/CreateUser")
-        @UseBefore(AuthMiddleWare)
-
+    @UseBefore(AuthMiddleWare)
     @HttpCode(200)
     async CreateUser(@Body() body: UsersModel) {
         return await this.userdata.CreateUser(body);
