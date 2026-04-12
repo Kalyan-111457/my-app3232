@@ -1,7 +1,11 @@
 import { prisma } from "../config/prisma";
+import { OpenAiService } from "../Service/OpenAiService";
+import { DownloadFileService } from "../Service/DownloadFileService";
 
 export class ApplicationRepository {
     private prisma = prisma;
+    private OpenAi=new OpenAiService();
+    private downloadfile=new DownloadFileService();
 
     async ApplyJob(userid: number, jobid: number, resumeurl: string) {
         const user = await this.prisma.user.findUnique({
@@ -29,12 +33,28 @@ export class ApplicationRepository {
           
         }
 
+        await this.prisma.user.update({
+            where:{
+                id:userid
+            },
+            data:{
+                resumeurl:resumeurl
+            }
+        })
+
+
        return await this.prisma.application.create({
             data: {
                 userId: userid,
                 jobId: jobid,
                 resumeurl: resumeurl,
-                status: "Applied"
+                status: "Applied",
+                totalScore: 0,
+                SkillsScore: 0,
+                ProjectScore: 0,
+                EducationScore: 0,
+                ExperienceScore: 0,
+                aifeedback: ""
             }
         });
 
@@ -62,11 +82,13 @@ export class ApplicationRepository {
 
     async deleteApplication(id: number) {
         const checking = await this.prisma.application.findUnique({
-            where: { id: id }
+            where: { id: id,
+                isDeleted:false
+             }
         });
 
         if (!checking || checking.isDeleted) {
-            throw new Error("Application data is Found"); 
+            throw new Error("Application data not found or already deleted");
         }
 
         return await this.prisma.application.update({
@@ -95,20 +117,59 @@ export class ApplicationRepository {
     }
 
     async getApplicationByJobid(jobid: number) {
-        const data = await this.prisma.application.findMany({
-            where: {
-                jobId: jobid,
-                isDeleted: false
-            },
-            include: { user: true },
-            orderBy: { createdAt: "desc" }
-        });
+        const response=await this.prisma.job.findFirst({
+            where:{
+                id:jobid,
+                isDeleted:false
+            }
+        })
 
-        if (data.length === 0) {
-           throw new Error("No data is Found")
+       if(response){
+            const response=await this.prisma.job.findMany({
+                where:{
+                    id:jobid,
+                    isDeleted:false
+                },
+                select:{
+                    id:true,
+                    title:true,
+                    description:true,
+                    salary:true,
+                    company:true,
+                    location:true,
+                    applications:{
+                        where:{
+                            isDeleted:false
+                        },
+                        select:{
+                            status:true,
+                            resumeurl:true,
+                            totalScore:true,
+                            ExperienceScore:true,
+                            EducationScore:true,
+                            ProjectScore:true,
+                            SkillsScore:true,
+                            aifeedback:true,
+                            id:true,
+                            user:{
+                                select:{
+                                    id:true,
+                                    fullname:true,
+                                    email:true,
+                                    phone:true,
+                                    bio:true
+                                }
+                            }
+                        }
+                    }
+                }
+
+            })
+            return response;
         }
-
-        return data;
+        else{
+            throw new Error("we are not getting the data");
+        }
     }
 
     async getApplicationByid(id: number) {
@@ -148,5 +209,66 @@ export class ApplicationRepository {
         }
 
         return data;
+    }
+
+
+
+    async AiRepositoryForAiModels(jobid:number){
+
+        const response=await this.prisma.job.findFirst({
+            where:{
+                id:jobid,
+                isDeleted:false
+            }
+        })
+
+        if(!response){
+            throw new Error("No JobId is Found");
+        }
+
+        const result=await this.prisma.application.findMany({
+            where:{
+                jobId:jobid,
+                isDeleted:false
+            }
+        });
+
+        const finalresult=await Promise.all(
+            result.map(async(item)=>{
+                if(item.totalScore){
+                    return item;
+                }
+
+                const text=await this.downloadfile.ConvertPdfLinktotext(item.resumeurl);
+
+                const cleanText = text
+                        .replace(/\n/g, " ")
+                        .replace(/\s+/g, " ")
+                        .slice(0, 3000);
+
+                const apiresponse=await this.OpenAi.analyseResume(cleanText,response.description);
+
+                return await this.prisma.application.update({
+                    where:{
+                        id:item.id
+                    },
+                    data:{
+                        totalScore:apiresponse.totalScore,
+                        SkillsScore:apiresponse.skillsScore,
+                        ProjectScore:apiresponse.projectsScore,
+                        EducationScore:apiresponse.educationScore,
+                        ExperienceScore:apiresponse.experienceScore,
+                        aifeedback:apiresponse.feedback
+                    }
+
+                })
+
+
+
+            }
+        ))
+        return finalresult;
+
+    
     }
 }

@@ -1,5 +1,7 @@
 import { ApiClient } from "../../services/apiclient";
 import type { UserRequestPayload, UsersData } from "./types";
+import type{ JobResponsePayload } from "./type";
+
 
 export const usersavedata = async (data: UserRequestPayload) => {
     try {
@@ -49,10 +51,67 @@ export const deleteUsers=async(id:number)=>{
             alert(`Some Thing Went Wrong`);
         }
     }
+}
 
-
+export const ApplicationsBasedOnJobId=async(id:number):Promise<JobResponsePayload>=>{
+    try{
+        const response=await ApiClient.get<JobResponsePayload>(`/Application/GetApplicationByJobId/${id}`);
+        if(response.data){
+            return response.data;
+        }
+        else{
+            throw new Error("We are getting Error from the Api");
+        }
+    }
+    catch(error){
+        if(error instanceof Error){
+            console.error(error.message);
+            throw error;
+        }
+        else{
+            alert("SomeThing Went Wrong");
+            throw new Error("SomeThing Went Wrong");
+        }
+    }
 }
 
 
+export const handleAiEndpoint=async(jobid:number)=>{
+    try{
+        const response=await ApiClient.post(`/Application/Analyse/${jobid}`);
+        if(response.data){
+            return response;
+        }
+        else{
+            throw new Error("Something went Wrong from the Api");
+        }
+    }catch(error){
+        if(error instanceof Error){
+            throw new Error("We are getting the Error");
+        }
+        else{
+            throw new Error("SomeThing wnet Wrong");
+        }
+    }
+}
 
+export const handledeleteApplication=async(id:number)=>{
+    try{
+        const response=await ApiClient.post(`/Application/deleteApplication/${id}`)
+        if(response.data){
+            return response;
+        }
+        else{
+            throw new Error("We are getting the Error from the Endpoint");
+        }
+    }
+    catch(error){
+        if(error instanceof Error){
 
+            alert(error.message);
+        }
+        else{
+            alert("Something went Wrong");
+        }
+    }
+}

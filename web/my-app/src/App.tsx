@@ -4,6 +4,8 @@ import CreateJob from './features/Jobs/pages/CreateJob'
 import UserForm from './features/Jobs/pages/UserForm'
 import JobApplyPage from './features/users/pages/JobApplyPage'
 import UserHomePage from './features/users/pages/UserHomePage'
+import { AllUsersDataWithJOb } from './features/Jobs/pages/AllUsersDataWithJOBs'
+import { AiJobsPage } from './features/Jobs/pages/AiJobsPage'
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/jobs" element={<CreateJob />} />
         <Route path="/ApplyJob" element={<JobApplyPage />} />
         <Route path="/alljobs" element={<UserHomePage />} />
+        <Route path='/AllJobsByJobIdWithAi' element={<AllUsersDataWithJOb/>}/>
+        <Route path='/AIJobs/:id' element={<AiJobsPage/>}/>
       </Routes>
 
     </>

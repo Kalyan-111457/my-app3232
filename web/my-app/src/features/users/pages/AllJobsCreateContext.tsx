@@ -11,7 +11,6 @@ jobs: Alljobs[] | undefined;
   setjobs: () => {},
 });
 
-
 export const AllJobsProvider = ({ children }: { children: React.ReactNode }) => {
     const [jobs, setjobs] = useState<Alljobs[] |undefined>(undefined);
 

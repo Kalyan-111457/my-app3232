@@ -33,14 +33,12 @@ export class ApplicationService{
         return await this.data.deleteApplication(id);
     }
 
-
     async getApplicationById(id:number){
         if(id<=0){
             throw new Error("the id is not be less than Zero");
         }
         return await this.data.getApplicationByid(Number(id));
     }
-
 
     async getApplicationByUserId(id:number){
         if(id<=0){
@@ -49,7 +47,6 @@ export class ApplicationService{
         return await this.data.getApplicationsByuserId(Number(id));
     }
 
-
     async getApplicationByJobId(id:number){
         if(id<=0){
             throw new Error("The id is not be less than Zero");
@@ -57,11 +54,14 @@ export class ApplicationService{
         return await this.data.getApplicationByJobid(Number(id))
     }
 
-
     async getApploicationByUserIdandJobId(userid:number,jobid:number){
         if(userid<=0 || jobid<=0){
             throw new Error("These cannot be less than Zero");
         }
         return await this.data.getApplicationBasedonUserIdandJobId(userid,jobid);
+    }
+
+    async AnalyseByAiService(jobid:number){
+        return this.data.AiRepositoryForAiModels(jobid);
     }
 }
