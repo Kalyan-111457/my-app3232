@@ -95,6 +95,7 @@ export class ApplicationController {
             return "Something went wrong";
         }
     }
+
     @Post("/UpdateStatus/:id")
     @UseBefore(AuthMiddleWare)
     @HttpCode(200)
@@ -103,9 +104,7 @@ export class ApplicationController {
     }
 
     @Post("/deleteApplication/:id")
-
     @UseBefore(AuthMiddleWare)
-
     @HttpCode(200)
     public async DeleteApplication(@Param("id") id: number) {
         return this.data.deleteApplication(Number(id));
@@ -113,7 +112,6 @@ export class ApplicationController {
 
     @Get("/GetApplicationById/:id")
     @UseBefore(AuthMiddleWare)
-
     @HttpCode(200)
     public async GetApplication(@Param("id") id: number) {
         return this.data.getApplicationById(Number(id))
@@ -130,7 +128,6 @@ export class ApplicationController {
 
     @Get("/GetApplicationByJobId/:id")
     @UseBefore(AuthMiddleWare)
-
     @HttpCode(200)
     public async GetApplicationByJobId(@Param("id") id: number) {
         return this.data.getApplicationByJobId(Number(id))
@@ -141,5 +138,12 @@ export class ApplicationController {
     @HttpCode(200)
     public async GetApplicationByUserIdandJobId(@QueryParam("userid") userid: number, @QueryParam("jobid") jobid: number) {
         return await this.data.getApploicationByUserIdandJobId(userid, jobid);
+    }
+
+
+    @Post("/Analyse/:jobid")
+    @HttpCode(200)
+    public async AnalyseByAi(@Param("jobid") jobid:number){
+        return this.data.AnalyseByAiService(jobid);
     }
 }
