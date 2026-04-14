@@ -30,8 +30,6 @@ export class UserController {
     }
 
     @Get("/GetSingleUser/:id")
-    
-
     @HttpCode(200)
     async getsingleuser(@Param("id") id: number) {
         return await this.userdata.getsingleuser(Number(id));

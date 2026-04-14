@@ -6,6 +6,7 @@ import JobApplyPage from './features/users/pages/JobApplyPage'
 import UserHomePage from './features/users/pages/UserHomePage'
 import { AllUsersDataWithJOb } from './features/Jobs/pages/AllUsersDataWithJOBs'
 import { AiJobsPage } from './features/Jobs/pages/AiJobsPage'
+import MainDashBoard from './features/Jobs/pages/MainDashBoard'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/alljobs" element={<UserHomePage />} />
         <Route path='/AllJobsByJobIdWithAi' element={<AllUsersDataWithJOb/>}/>
         <Route path='/AIJobs/:id' element={<AiJobsPage/>}/>
+        <Route path='/MainDashboard' element={<MainDashBoard/>}/>
       </Routes>
 
     </>

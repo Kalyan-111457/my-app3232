@@ -115,3 +115,117 @@ export const handledeleteApplication=async(id:number)=>{
         }
     }
 }
+
+
+export const AllActiveUsersCount=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllActiveUsersCount");
+
+        if(!response.data){
+            throw new Error("We are getting Error");
+        }
+        return response.data;
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("Something went Wrong");
+        }
+    }
+}
+
+
+export const AllInActiveUsersCount=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllInActiveUsersCount");
+        if(!response.data){
+            throw new Error("We are getting Error While Retreving");
+        }
+        return response.data;
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("Something Went Wrong");
+        }
+    }
+}
+
+
+export const AllActiveJobCount=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllJobsCount");
+        if(!response.data){
+            throw new Error("We are getting the Error");
+        }
+        return response.data;
+        
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("SomeThing went Wrong");
+        }
+    }
+}
+
+
+export const AllInActiveJobs=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllInActiveJobs");
+        if(!response.data){
+            throw new Error("We are getting the Error");
+        }
+        return response.data;
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("Something Went Wrong");
+        }
+    }
+}
+
+export const AllActiveApplications=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllActiveApplications");
+        if(!response.data){
+            throw new Error("We are getting the Error");
+        }
+        return response.data;
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("SomeThing went Wrong");
+        }
+    }
+}
+
+export const AllInActiveApplications=async()=>{
+    try{
+        const response=await ApiClient.get("/AllData/AllInActiveApplications");
+        if(!response.data){
+            throw new Error("We are not getting the Response")
+        }
+        return response.data
+    }
+    catch(error){
+        if(error instanceof Error){
+            alert(error.message);
+        }
+        else{
+            alert("Something Went Wrong");
+        }
+    }
+}

@@ -1,11 +1,7 @@
-import { PrismaClient } from "../../app/generated/prisma";
+import { prisma } from "../config/prisma";
 
 export class  AllDataCountRepository{
-    private data:PrismaClient;
-
-    constructor(){
-        this.data=new PrismaClient();
-    }
+    private data = prisma;
 
     async getAllActiveUsersRepository(){
         return this.data.user.count({
